@@ -1,0 +1,119 @@
+@function select-color($color1, $color2, $ratio) {  // select color pair to satisfy color contrast ratio
+  // set the high limit of relative luminance, and the low limit of relative luminance
+  $high-limit: 4 * $ratio;  // when color contrast ratio < 4.5
+  $low-limit: 4;
+
+  @if $ratio >= 7 {  // when color contrast ratio >= 7
+    $high-limit: 2 * $ratio;
+    $low-limit: 2;
+  }
+  @else if $ratio >= 4.5 {  // when color contrast ratio is between 4.5 and 7
+    $high-limit: 3 * $ratio;
+    $low-limit: 3;
+  }
+
+  $ratio-color1: (value-L($color1) + 0.05)/0.05;
+  $ratio-color2: (value-L($color2) + 0.05)/0.05;
+  // select the color with higher relative luminance, and the color with lower relative luminance
+  $high: $ratio-color1;
+  $high-color: $color1;
+  $low: $ratio-color2;
+  $low-color: $color2;
+  @if $ratio-color1 < $ratio-color2 {  // exchange
+    $high: $ratio-color2;
+    $high-color: $color2;
+    $low: $ratio-color1;
+    $low-color: $color1;
+  }
+
+  @if contrast($high-color, $low-color) >= $ratio {  // return original color pair when color contrast ratio is good
+    @return ($high-color, $low-color);
+  }
+
+  @if $high < $high-limit and $low > $low-limit {  // both colors need to be adjusted
+    @return (get-high-color($high-color, $high-limit), get-low-color($low-color, $low-limit));
+  }
+  @else if $high < $high-limit and $low < $low-limit {  // the color with higher relative luminance needs to be adjusted
+    @return (get-high-color($high-color, $high-limit), $low-color);
+  }
+  @else {  // the color with lower relative luminance needs to be adjusted
+    @return ($high-color, get-low-color($low-color, $low-limit));
+  }
+
+}
+
+@function get-low-color($color, $ratio) {  // adjust the color with lower relative luminance to be lower enough
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-lightness: 2 * $lightness / 3;  // reduce lightness of the color
+  $new-color: hsl($hue, $saturation, $new-lightness);
+  $ratio-color: (value-L($new-color) + 0.05)/0.05;
+  @while $ratio-color > $ratio {  // a loop to adjust the color
+    $new-lightness: 2 * $new-lightness / 3;
+    $new-color: hsl($hue, $saturation, $new-lightness);
+    $ratio-color: (value-L($new-color) + 0.05)/0.05;
+  }
+  @return $new-color;
+}
+
+@function get-high-color($color, $ratio) {  // adjust the color with higher relative luminance to be higher enough
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-lightness: $lightness + (100 - $lightness) / 3;  // increase lightness of the color
+  $new-color: hsl($hue, $saturation, $new-lightness);
+  $ratio-color: (value-L($new-color) + 0.05)/0.05;
+  @while $ratio-color < $ratio {  // a loop to adjust the color
+    $new-lightness: $new-lightness + (100 - $new-lightness) / 3;
+    $new-color: hsl($hue, $saturation, $new-lightness);
+    $ratio-color: (value-L($new-color) + 0.05)/0.05;
+  }
+  @return $new-color;
+}
+
+@function contrast($color, $bg-color) {  // calculate color contrast ratio
+  $temp: front-back-ratio($color, $bg-color);
+  @if $temp > 1 {
+    @return $temp;
+  }
+  @else {
+    @return 1 / $temp;
+  }
+}
+
+@function front-back-ratio($color, $bg-color) {  // calculate ratio of front color(first argument) to background color(second argument)
+  @return (value-L($color) + 0.05) / (value-L($bg-color) + 0.05);
+}
+
+@function value-L($color) {  // calculate relative luminance
+  $red: red($color) / 255;
+  $green: green($color) / 255;
+  $blue: blue($color) / 255;
+  @return 0.2126 * value-RGB($red) + 0.7152 * value-RGB($green) + 0.0722 * value-RGB($blue);
+}
+
+@function value-RGB($mono-color) {  // Used to calculate R, G, and B
+  @if $mono-color <= 0.03928 {
+    @return $mono-color / 12.92;
+  }
+  @else {
+    $temp: ($mono-color + 0.055) / 1.055;
+    $result: $temp * fifth-root($temp);
+    @return $result * $result;
+  }
+}
+
+@function fifth-root($number) {  // calculate pow($number, 0.2), using nth-root algorithm
+  $current: $number;
+  $delta: ($number / fourth-power($current) - $current) / 5;
+  @while $delta > 0.0001 or $delta < -0.0001 {
+    $current: $current + $delta;
+    $delta: ($number / fourth-power($current) - $current) / 5;
+  }
+  @return $current;
+}
+
+@function fourth-power($number) {  // calculate pow($number, 4)
+  @return $number * $number * $number * $number;
+}
