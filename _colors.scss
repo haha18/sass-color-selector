@@ -10,7 +10,37 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-@function select-color($color1, $color2, $ratio) {  // select color pair to satisfy color contrast ratio
+/* select a color pair satisfies given color contrast ratio, based on Monochromatic color schemes
+ * mono-pair($color, $ratio): call color-pair($color1, $color2, $ratio). initialize $color1 and $color2 to be $color (the same color)
+ */
+@function mono-pair($color, $ratio) {
+  @return color-pair($color, $color, $ratio);
+}
+
+/* select a color pair satisfies given color contrast ratio, based on Complementary color schemes
+ * complem-pair($color, $ratio): calculate the complementary color based on given color, then call color-pair($color1, $color2, $ratio)
+ */
+ @function complem-pair($color, $ratio) {
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-hue: $hue + 180;
+  @if $new-hue >= 360 {
+    $new-hue: $new-hue - 360;
+  }
+  $new-color: hsl($new-hue, $saturation, $lightness);
+  @return color-pair($color, $new-color, $ratio);
+}
+
+/* select color pair based on given color pair and color contrast ratio
+ * Three functions included
+ * select-color($color1, $color2, $ratio): the Main function, check whether the color pair satisfies color contrast ratio or not. If not, adjust one or two colors (adjust lightness of color)
+ * resturned color pair: ($high-color, $low-color)
+ *
+ * get-low-color($color, $ratio): adjust the color with lower relative luminance to be lower enough
+ * get-high-color($color, $ratio): adjust the color with higher relative luminance to be higher enough
+ */
+@function color-pair($color1, $color2, $ratio) {  // select color pair to satisfy color contrast ratio
   // set the high limit of relative luminance, and the low limit of relative luminance
   $high-limit: 4 * $ratio;  // when color contrast ratio < 4.5
   $low-limit: 4;
@@ -84,18 +114,20 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return $new-color;
 }
 
-@function contrast($color, $bg-color) {  // calculate color contrast ratio
-  $temp: front-back-ratio($color, $bg-color);
+/* Color contrast ratio
+ * Three functions included
+ * contrast($color1, $color2): the Main function, calculate color contrast ratio based on relative luminance, call function value-L($color)
+ * value-L($color): calculate relative luminance of $color, call function value-RGB($mono-color)
+ * value-RGB($mono-color): calculate value of R, G, or B, based on mono-color value of red, green, or blue, and the mono-color value is between 0 and 1, call math function fifth-root($number)
+ */
+@function contrast($color1, $color2) {  // calculate color contrast ratio
+  $temp: (value-L($color1) + 0.05) / (value-L($color2) + 0.05);
   @if $temp > 1 {
     @return $temp;
   }
   @else {
     @return 1 / $temp;
   }
-}
-
-@function front-back-ratio($color, $bg-color) {  // calculate ratio of front color(first argument) to background color(second argument)
-  @return (value-L($color) + 0.05) / (value-L($bg-color) + 0.05);
 }
 
 @function value-L($color) {  // calculate relative luminance
@@ -116,6 +148,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   }
 }
 
+/* Math functions of fourth-power and fifth-root
+ * In fifth-root() function, a nth-root algorithm is used.
+ * In fifth-root() function, the fourth-power() function is called.
+ */
 @function fifth-root($number) {  // calculate pow($number, 0.2), using nth-root algorithm
   $current: $number;
   $delta: ($number / fourth-power($current) - $current) / 5;
