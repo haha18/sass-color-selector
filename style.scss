@@ -1,0 +1,67 @@
+@import "_colors";
+
+$color: brown;
+
+.mono {
+  background-color: nth(mono-pair($color, 4.5), 2);
+  span {
+    background-color: nth(mono-pair($color, 4.5), 1);
+    color: nth(mono-pair($color, 4.5), 2);
+  }
+}
+
+.complem {
+  background-color: nth(complem-pair($color, 4.5), 2);
+  span {
+    background-color: nth(complem-pair($color, 4.5), 1);
+    color: nth(complem-pair($color, 4.5), 2);
+  }
+}
+
+.analo {
+  background-color: nth(analo-pair($color, 4.5, 1), 2);
+  span {
+    background-color: nth(analo-pair($color, 4.5, 1), 1);
+    color: nth(analo-pair($color, 4.5, 1), 2);
+  }
+}
+
+.analo-2 {
+  background-color: nth(analo-pair($color, 4.5, 2), 2);
+  span {
+    background-color: nth(analo-pair($color, 4.5, 2), 1);
+    color: nth(analo-pair($color, 4.5, 2), 2);
+  }
+}
+
+.tri {
+  background-color: nth(tri-pair($color, 4.5, 1), 2);
+  span {
+    background-color: nth(tri-pair($color, 4.5, 1), 1);
+    color: nth(tri-pair($color, 4.5, 1), 2);
+  }
+}
+
+.tri-2 {
+  background-color: nth(tri-pair($color, 4.5, 2), 2);
+  span {
+    background-color: nth(tri-pair($color, 4.5, 2), 1);
+    color: nth(tri-pair($color, 4.5, 2), 2);
+  }
+}
+
+.compound {
+  background-color: nth(compound-pair($color, 4.5, 1), 2);
+  span {
+    background-color: nth(compound-pair($color, 4.5, 1), 1);
+    color: nth(compound-pair($color, 4.5, 1), 2);
+  }
+}
+
+.compound-2 {
+  background-color: nth(compound-pair($color, 4.5, 2), 2);
+  span {
+    background-color: nth(compound-pair($color, 4.5, 2), 1);
+    color: nth(compound-pair($color, 4.5, 2), 2);
+  }
+}

@@ -20,11 +20,68 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /* select a color pair satisfies given color contrast ratio, based on Complementary color schemes
  * complem-pair($color, $ratio): calculate the complementary color based on given color, then call color-pair($color1, $color2, $ratio)
  */
- @function complem-pair($color, $ratio) {
+@function complem-pair($color, $ratio) {
   $hue: hue($color);
   $saturation: saturation($color);
   $lightness: lightness($color);
   $new-hue: $hue + 180;
+  @if $new-hue >= 360 {
+    $new-hue: $new-hue - 360;
+  }
+  $new-color: hsl($new-hue, $saturation, $lightness);
+  @return color-pair($color, $new-color, $ratio);
+}
+
+/* select a color pair satisfies given color contrast ratio, based on Analogous color schemes
+ * analo-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+ * when $choose, the choose switch is set to 2, then the value of hue will shift 60 degree. Otherwhise, the value of hue will shift 30 degree.
+ */
+@function analo-pair($color, $ratio, $choose) {
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-hue: $hue + 30;
+  @if $choose == 2 {
+    $new-hue: $hue + 60;
+  }
+  @if $new-hue >= 360 {
+    $new-hue: $new-hue - 360;
+  }
+  $new-color: hsl($new-hue, $saturation, $lightness);
+  @return color-pair($color, $new-color, $ratio);
+}
+
+/* select a color pair satisfies given color contrast ratio, based on Triadic color schemes
+ * tri-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+ * when $choose, the choose switch is set to 2, then the value of hue will shift 240 degree. Otherwhise, the value of hue will shift 120 degree.
+ */
+@function tri-pair($color, $ratio, $choose) {
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-hue: $hue + 120;
+  @if $choose == 2 {
+    $new-hue: $hue + 240;
+  }
+  @if $new-hue >= 360 {
+    $new-hue: $new-hue - 360;
+  }
+  $new-color: hsl($new-hue, $saturation, $lightness);
+  @return color-pair($color, $new-color, $ratio);
+}
+
+/* select a color pair satisfies given color contrast ratio, based on Compound color schemes
+ * compound-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+ * when $choose, the choose switch is set to 2, then the value of hue will shift 210 degree. Otherwhise, the value of hue will shift 150 degree.
+ */
+@function compound-pair($color, $ratio, $choose) {
+  $hue: hue($color);
+  $saturation: saturation($color);
+  $lightness: lightness($color);
+  $new-hue: $hue + 150;
+  @if $choose == 2 {
+    $new-hue: $hue + 210;
+  }
   @if $new-hue >= 360 {
     $new-hue: $new-hue - 360;
   }
