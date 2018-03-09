@@ -98,6 +98,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  * get-high-color($color, $ratio): adjust the color with higher relative luminance to be higher enough
  */
 @function color-pair($color1, $color2, $ratio) {  // select color pair to satisfy color contrast ratio
+  // return original color pair when color contrast ratio is good
+  @if contrast($color1, $color2) >= $ratio {
+    @return ($color1, $color2);
+  }
+
   // set the high limit of relative luminance, and the low limit of relative luminance
   $high-limit: 4 * $ratio;  // when color contrast ratio < 4.5
   $low-limit: 4;
@@ -113,30 +118,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
   $ratio-color1: (value-L($color1) + 0.05)/0.05;
   $ratio-color2: (value-L($color2) + 0.05)/0.05;
+
   // select the color with higher relative luminance, and the color with lower relative luminance
   $high: $ratio-color1;
   $high-color: $color1;
   $low: $ratio-color2;
   $low-color: $color2;
+  $exchanged: false;
   @if $ratio-color1 < $ratio-color2 {  // exchange
     $high: $ratio-color2;
     $high-color: $color2;
     $low: $ratio-color1;
     $low-color: $color1;
-  }
-
-  @if contrast($high-color, $low-color) >= $ratio {  // return original color pair when color contrast ratio is good
-    @return ($high-color, $low-color);
+    $exchanged: true;
   }
 
   @if $high < $high-limit and $low > $low-limit {  // both colors need to be adjusted
-    @return (get-high-color($high-color, $high-limit), get-low-color($low-color, $low-limit));
+    $high-color: get-high-color($high-color, $high-limit);
+    $low-color: get-low-color($low-color, $low-limit);
   }
   @else if $high < $high-limit and $low < $low-limit {  // the color with higher relative luminance needs to be adjusted
-    @return (get-high-color($high-color, $high-limit), $low-color);
+    $high-color: get-high-color($high-color, $high-limit);
   }
   @else {  // the color with lower relative luminance needs to be adjusted
-    @return ($high-color, get-low-color($low-color, $low-limit));
+    $low-color: get-low-color($low-color, $low-limit);
+  }
+
+  @if $exchanged {  // exchange color back
+    @return ($low-color, $high-color);
+  }
+  @else {
+    @return ($high-color, $low-color);
   }
 
 }
