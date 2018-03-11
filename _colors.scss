@@ -1,25 +1,21 @@
 /*
-Copyright <2018> <Bing Yang>
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/* select a color pair satisfies given color contrast ratio, based on Monochromatic color schemes
- * mono-pair($color, $ratio): call color-pair($color1, $color2, $ratio). initialize $color1 and $color2 to be $color (the same color)
+ * Copyright (c) 2018, Bing Yang
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree.
+ *
  */
+
+// select a color pair satisfies given color contrast ratio, based on Monochromatic color schemes
+// mono-pair($color, $ratio): call color-pair($color1, $color2, $ratio). initialize $color1 and $color2 to be $color (the same color)
+//
 @function mono-pair($color, $ratio) {
   @return color-pair($color, $color, $ratio);
 }
 
-/* select a color pair satisfies given color contrast ratio, based on Complementary color schemes
- * complem-pair($color, $ratio): calculate the complementary color based on given color, then call color-pair($color1, $color2, $ratio)
- */
+// select a color pair satisfies given color contrast ratio, based on Complementary color schemes
+// complem-pair($color, $ratio): calculate the complementary color based on given color, then call color-pair($color1, $color2, $ratio)
 @function complem-pair($color, $ratio) {
   $hue: hue($color);
   $saturation: saturation($color);
@@ -32,10 +28,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return color-pair($color, $new-color, $ratio);
 }
 
-/* select a color pair satisfies given color contrast ratio, based on Analogous color schemes
- * analo-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
- * when $choose, the choose switch is set to 2, then the value of hue will shift 60 degree. Otherwhise, the value of hue will shift 30 degree.
- */
+// select a color pair satisfies given color contrast ratio, based on Analogous color schemes
+// analo-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+// when $choose, the choose switch is set to 2, then the value of hue will shift 60 degree. Otherwhise, the value of hue will shift 30 degree.
 @function analo-pair($color, $ratio, $choose) {
   $hue: hue($color);
   $saturation: saturation($color);
@@ -51,10 +46,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return color-pair($color, $new-color, $ratio);
 }
 
-/* select a color pair satisfies given color contrast ratio, based on Triadic color schemes
- * tri-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
- * when $choose, the choose switch is set to 2, then the value of hue will shift 240 degree. Otherwhise, the value of hue will shift 120 degree.
- */
+// select a color pair satisfies given color contrast ratio, based on Triadic color schemes
+// tri-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+// when $choose, the choose switch is set to 2, then the value of hue will shift 240 degree. Otherwhise, the value of hue will shift 120 degree.
 @function tri-pair($color, $ratio, $choose) {
   $hue: hue($color);
   $saturation: saturation($color);
@@ -70,10 +64,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return color-pair($color, $new-color, $ratio);
 }
 
-/* select a color pair satisfies given color contrast ratio, based on Compound color schemes
- * compound-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
- * when $choose, the choose switch is set to 2, then the value of hue will shift 210 degree. Otherwhise, the value of hue will shift 150 degree.
- */
+// select a color pair satisfies given color contrast ratio, based on Compound color schemes
+// compound-pair($color, $ratio, $choose): calculate the analogous color based on given color and a choose switch, then call color-pair($color1, $color2, $ratio)
+// when $choose, the choose switch is set to 2, then the value of hue will shift 210 degree. Otherwhise, the value of hue will shift 150 degree.
 @function compound-pair($color, $ratio, $choose) {
   $hue: hue($color);
   $saturation: saturation($color);
@@ -89,14 +82,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return color-pair($color, $new-color, $ratio);
 }
 
-/* select color pair based on given color pair and color contrast ratio
- * Three functions included
- * select-color($color1, $color2, $ratio): the Main function, check whether the color pair satisfies color contrast ratio or not. If not, adjust one or two colors (adjust lightness of color)
- * resturned color pair: ($high-color, $low-color)
- *
- * get-low-color($color, $ratio): adjust the color with lower relative luminance to be lower enough
- * get-high-color($color, $ratio): adjust the color with higher relative luminance to be higher enough
- */
+// select color pair based on given color pair and color contrast ratio
+// Three functions included
+// select-color($color1, $color2, $ratio): the Main function, check whether the color pair satisfies color contrast ratio or not. If not, adjust one or two colors (adjust lightness of color)
+// resturned color pair: ($high-color, $low-color)
+
+// get-low-color($color, $ratio): adjust the color with lower relative luminance to be lower enough
+// get-high-color($color, $ratio): adjust the color with higher relative luminance to be higher enough
 @function color-pair($color1, $color2, $ratio) {  // select color pair to satisfy color contrast ratio
   // return original color pair when color contrast ratio is good
   @if contrast($color1, $color2) >= $ratio {
@@ -183,12 +175,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   @return $new-color;
 }
 
-/* Color contrast ratio
- * Three functions included
- * contrast($color1, $color2): the Main function, calculate color contrast ratio based on relative luminance, call function value-L($color)
- * value-L($color): calculate relative luminance of $color, call function value-RGB($mono-color)
- * value-RGB($mono-color): calculate value of R, G, or B, based on mono-color value of red, green, or blue, and the mono-color value is between 0 and 1, call math function fifth-root($number)
- */
+// Color contrast ratio
+// Three functions included
+// contrast($color1, $color2): the Main function, calculate color contrast ratio based on relative luminance, call function value-L($color)
+// value-L($color): calculate relative luminance of $color, call function value-RGB($mono-color)
+// value-RGB($mono-color): calculate value of R, G, or B, based on mono-color value of red, green, or blue, and the mono-color value is between 0 and 1, call math function fifth-root($number)
 @function contrast($color1, $color2) {  // calculate color contrast ratio
   $temp: (value-L($color1) + 0.05) / (value-L($color2) + 0.05);
   @if $temp > 1 {
@@ -217,10 +208,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
   }
 }
 
-/* Math functions of fourth-power and fifth-root
- * In fifth-root() function, a nth-root algorithm is used.
- * In fifth-root() function, the fourth-power() function is called.
- */
+// Math functions of fourth-power and fifth-root
+// In fifth-root() function, a nth-root algorithm is used.
+// In fifth-root() function, the fourth-power() function is called.
 @function fifth-root($number) {  // calculate pow($number, 0.2), using nth-root algorithm
   $current: $number;
   $delta: ($number / fourth-power($current) - $current) / 5;

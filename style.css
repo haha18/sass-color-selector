@@ -1,0 +1,74 @@
+/*
+ * Copyright <2018> <Bing Yang>
+ */
+.mono {
+  background-color: #005500;
+}
+
+.mono span {
+  background-color: lime;
+  color: #005500;
+}
+
+.complem {
+  background-color: purple;
+}
+
+.complem span {
+  background-color: lime;
+  color: purple;
+}
+
+.analo {
+  background-color: #00ff80;
+}
+
+.analo span {
+  background-color: #005500;
+  color: #00ff80;
+}
+
+.analo-2 {
+  background-color: cyan;
+}
+
+.analo-2 span {
+  background-color: #005500;
+  color: cyan;
+}
+
+.tri {
+  background-color: navy;
+}
+
+.tri span {
+  background-color: lime;
+  color: navy;
+}
+
+.tri-2 {
+  background-color: maroon;
+}
+
+.tri-2 span {
+  background-color: lime;
+  color: maroon;
+}
+
+.compound {
+  background-color: #400080;
+}
+
+.compound span {
+  background-color: lime;
+  color: #400080;
+}
+
+.compound-2 {
+  background-color: #800040;
+}
+
+.compound-2 span {
+  background-color: lime;
+  color: #800040;
+}
