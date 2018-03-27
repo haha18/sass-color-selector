@@ -124,17 +124,30 @@
     $low-color: $color1;
     $exchanged: true;
   }
+  
+  @if $low * $ratio < 21 {
+    $high: $low * $ratio;  
+    $high-color: get-high-color($high-color, $high);
+  }
+  @else if $high / $ratio > 1 {
+    $low: $high / $ratio;  
+    $low-color: get-low-color($low-color, $low);
+  }
+  @else {
+    $high-color: get-high-color($high-color, $high-limit);
+    $low-color: get-low-color($low-color, $low-limit);
+  }
 
-  @if $high < $high-limit and $low > $low-limit {  // both colors need to be adjusted
-    $high-color: get-high-color($high-color, $high-limit);
-    $low-color: get-low-color($low-color, $low-limit);
-  }
-  @else if $high < $high-limit and $low < $low-limit {  // the color with higher relative luminance needs to be adjusted
-    $high-color: get-high-color($high-color, $high-limit);
-  }
-  @else {  // the color with lower relative luminance needs to be adjusted
-    $low-color: get-low-color($low-color, $low-limit);
-  }
+  //@if $high < $high-limit and $low > $low-limit {  // both colors need to be adjusted
+  //  $high-color: get-high-color($high-color, $high-limit);
+  //  $low-color: get-low-color($low-color, $low-limit);
+  //}
+  //@else if $high < $high-limit and $low < $low-limit {  // the color with higher relative luminance needs to be adjusted
+  //  $high-color: get-high-color($high-color, $high-limit);
+  //}
+  //@else {  // the color with lower relative luminance needs to be adjusted
+  //  $low-color: get-low-color($low-color, $low-limit);
+  //}
 
   @if $exchanged {  // exchange color back
     @return ($low-color, $high-color);
@@ -149,11 +162,11 @@
   $hue: hue($color);
   $saturation: saturation($color);
   $lightness: lightness($color);
-  $new-lightness: 2 * $lightness / 3;  // reduce lightness of the color
+  $new-lightness: $lightness - 0.01;  // reduce lightness of the color
   $new-color: hsl($hue, $saturation, $new-lightness);
   $ratio-color: (value-L($new-color) + 0.05)/0.05;
   @while $ratio-color > $ratio {  // a loop to adjust the color
-    $new-lightness: 2 * $new-lightness / 3;
+    $new-lightness: $new-lightness - 0.01;
     $new-color: hsl($hue, $saturation, $new-lightness);
     $ratio-color: (value-L($new-color) + 0.05)/0.05;
   }
@@ -164,11 +177,11 @@
   $hue: hue($color);
   $saturation: saturation($color);
   $lightness: lightness($color);
-  $new-lightness: $lightness + (100 - $lightness) / 3;  // increase lightness of the color
+  $new-lightness: $lightness + 0.01;  // increase lightness of the color
   $new-color: hsl($hue, $saturation, $new-lightness);
   $ratio-color: (value-L($new-color) + 0.05)/0.05;
   @while $ratio-color < $ratio {  // a loop to adjust the color
-    $new-lightness: $new-lightness + (100 - $new-lightness) / 3;
+    $new-lightness: $new-lightness + 0.01;
     $new-color: hsl($hue, $saturation, $new-lightness);
     $ratio-color: (value-L($new-color) + 0.05)/0.05;
   }
